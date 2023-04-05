@@ -81,9 +81,16 @@ int main(int argc, char **argv) {
     list = (list == 1) ? list : get_filters_output("--list", argc, argv);
     size = (size == 1) ? size : get_filters_output("--size", argc, argv);
 
-    printf("nocount %d\n", nocount);
-    printf("list %d\n", list);
-    printf("size %d\n", size);
+    /* se verifica que la region ingresada sea valida*/
+    if (!verify_input(region, specie, type)) {
+        printf("Error in input command.\n");
+        printf("Usage: ./fameChecker [-r <region>] [-s <species>] [-t <type>] [-c|--nocount] [-l|--list] [-s|--size] [name]\n");
+        printf("<region> = [johto, kanto, orange_islands]\n")
+        printf("<species> = [pokemon, trainers]\n");
+        printf("<type> = [main, one_time, recurring, gym_leaders]\n");
+
+        exit(1);
+    }
 }
 
 char* get_filters_files(char* type, int argc, char **argv) {
