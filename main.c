@@ -119,6 +119,8 @@ int main(int argc, char **argv) {
         name = ""; /*Si no se ingresó nada se deja un string vacío*/
     }
 
+    count = 0;
+    
     traverse_directory("./directorio", 1, region, specie, type, name, nocount, list, size, 0, 0, 0, &count);
     !nocount && printf("Number of files matching criteria: %d\n", count);
 
