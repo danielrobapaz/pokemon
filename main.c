@@ -75,6 +75,7 @@ int verify_input(char *region, char *species, char *type);
 int is_directory(char* path);
 int is_reg_file(char* path);
 int calc_size(char* path);
+void print_paths(int l, int sz, char* d_name, int size);
 
 int main(int argc, char **argv) {
     /* Variable para los filtros de la query a realizar*/
@@ -122,22 +123,22 @@ int main(int argc, char **argv) {
     count = 0;
     
     traverse_directory("./directorio", 1, region, specie, type, name, nocount, list, size, 0, 0, 0, &count);
-    !nocount && printf("Number of files matching criteria: %d\n", count);
+    !nocount && printf("\nNumber of files matching criteria: %d\n", count);
 
     return 0;
 }
 
-/**
- * Funcion que recibe el input ingresado al programa y verifica que sea valido para el
- * programa. En caso de que el input ingresado sea valido se retorna 0 y se retorna 1 
- * en caso contrario.
- * 
- * Entrada:
- *      - input: apuntador al arreglo de strings que representa el input
- * Salida: 0 si el input ingresado es valido y 1 en caso contrario
-*/
-
 int verify_input(char *region, char *species, char *type) {
+    /**
+     * Funcion que recibe el input ingresado al programa y verifica que sea valido para el
+     * programa. En caso de que el input ingresado sea valido se retorna 0 y se retorna 1 
+     * en caso contrario.
+     * 
+     * Entrada:
+     *      - input: apuntador al arreglo de strings que representa el input
+     * Salida: 0 si el input ingresado es valido y 1 en caso contrario
+    */
+
     if (strcmp(region, "kanto") && strcmp(region, "johto") && strcmp(region, "orange_islands") && strcmp(region, "")) {
         return 1;
     }else if (strcmp(species, "pokemon") && strcmp(species, "trainers") && strcmp(species, "")) {
@@ -245,10 +246,8 @@ int get_filters_output(char* type, int argc, char **argv) {
     return 0;
 }
 
-void print_paths(int l, int sz, char* d_name, int indent, int size) {
+void print_paths(int l, int sz, char* d_name, int size) {
     if (l) {
-        int i = 0;
-        while (i++ < indent) printf("-");
         printf("%s", d_name);
         if (sz) {
             printf(": %d kB", size);
@@ -304,14 +303,12 @@ int traverse_directory(char* dirname, int indent,
             if (is_directory(path)) {
                 if (!r_ch) {
                     if (!strcmp(d_name, r) || !strcmp(r, "")) {
-                        print_paths(l, 0, d_name, indent, 0);
                         traverse_directory(path, new_indent, r, sp, t, name, c, l, sz, 1, 0, 0, counter);
                     }
                 }
                 if (!sp_ch) {
                     if (strstr(path, r)) {
                         if (!strcmp(d_name, sp) || !strcmp(sp, "")) {
-                            print_paths(l, 0, d_name, indent, 0);
                             traverse_directory(path, new_indent, r, sp, t, name, c, l, sz, 1, 1, 0, counter);
                         }
                     }
@@ -319,7 +316,6 @@ int traverse_directory(char* dirname, int indent,
                 if (!t_ch) {
                     if (strstr(path, sp)) {
                         if (!strcmp(d_name, t) || !strcmp(t, "")) {
-                            print_paths(l, 0, d_name, indent, 0);
                             traverse_directory(path, new_indent, r, sp, t, name, c, l, sz, 1, 1, 1, counter);
                         }
                     }
@@ -331,13 +327,13 @@ int traverse_directory(char* dirname, int indent,
                     if (strstr(d_name, name) != NULL) {
                         *counter += 1;
                         if (l) {
-                            print_paths(l, sz, d_name, indent, calc_size(path));
+                            print_paths(l, sz, d_name, calc_size(path));
                         }
                     }
                 }else {
                     *counter += 1;
                     if (l) {
-                        print_paths(l, sz, d_name, indent, calc_size(path));
+                        print_paths(l, sz, d_name, calc_size(path));
                     }
                 }
             }
