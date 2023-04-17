@@ -278,6 +278,7 @@ int traverse_directory(char* dirname, int indent,
      *  -sp_ch: flag que representa si ya fue chequeada la especie.
      *  -t_ch: flag que representa si ya fue chequeado el tipo.
     */
+    char *name_trunc = malloc(strlen(name) + 1); /*String donde se almacenará el truncamiento de los nombres de los archivos*/
     DIR* dir = opendir(dirname);
     struct dirent* entry;
 
@@ -322,7 +323,9 @@ int traverse_directory(char* dirname, int indent,
 
             if (is_reg_file(path) && t_ch) {
                 if (strcmp(name, "")) {
-                    if (strstr(d_name, name) != NULL) {
+                    strncpy(name_trunc, d_name, strlen(name));
+                    name_trunc[strlen(name)] = 0; /*Add null terminator*/
+                    if (!strcmp(name, name_trunc)) {
                         *counter += 1;
                         if (l) {
                             print_paths(l, sz, d_name, calc_size(path));
