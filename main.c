@@ -81,30 +81,30 @@ int main(int argc, char **argv) {
     /* Variable para los filtros de la query a realizar*/
     char *region, *specie, *type, *name;
     int nocount, list, size, count, arg_count;
+
     region = get_filters_files("-r", argc, argv);
     specie = get_filters_files("-s", argc, argv);
     type = get_filters_files("-t", argc, argv);
-
+    
     nocount = get_filters_output("-c", argc, argv);
     list = get_filters_output("-l", argc, argv);
-    size = get_filters_output("-s", argc, argv);
+    size = get_filters_output("--size", argc, argv);
 
-    /* en caso de que no se hayan escrito con -c, -l o -s se buscan con la otra opcion*/
+    /* en caso de que no se hayan escrito con -c, -l se buscan con la otra opcion*/
     nocount = (nocount == 1) ? nocount : get_filters_output("--nocount", argc, argv);
     list = (list == 1) ? list : get_filters_output("--list", argc, argv);
-    size = (size == 1) ? size : get_filters_output("--size", argc, argv);
 
     /* se verifica que la region ingresada sea valida*/
+    
     if (verify_input(region, specie, type)) {
         printf("Error in input command.\n");
-        printf("Usage: ./fameChecker [-r <region>] [-s <species>] [-t <type>] [-c|--nocount] [-l|--list] [-s|--size] [name]\n");
+        printf("Usage: ./fameChecker [-r <region>] [-s <species>] [-t <type>] [-c|--nocount] [-l|--list] [--size] [name]\n");
         printf("<region> = [johto, kanto, orange_islands]\n");
         printf("<species> = [pokemon, trainers]\n");
         printf("<type> = [main, one_time, recurring, gym_leaders]\n");
 
         exit(1);
     }
-
     /*Contabilizacion de argumentos*/
     arg_count = 0;
     arg_count += 2*(strcmp(region, "") != 0);
@@ -113,11 +113,10 @@ int main(int argc, char **argv) {
     arg_count += nocount + list + size;
 
     /*Se compara con la cantida de argumentos ingresados en consola*/
+    name = "";
     if (arg_count < argc - 1) {
         /*Si sobra algún argumento es que el usuario insertó un nombre a buscar*/
         name = argv[argc-1];
-    } else {
-        name = ""; /*Si no se ingresó nada se deja un string vacío*/
     }
 
     count = 0;
@@ -138,7 +137,6 @@ int verify_input(char *region, char *species, char *type) {
      *      - input: apuntador al arreglo de strings que representa el input
      * Salida: 0 si el input ingresado es valido y 1 en caso contrario
     */
-
     if (strcmp(region, "kanto") && strcmp(region, "johto") && strcmp(region, "orange_islands") && strcmp(region, "")) {
         return 1;
     }else if (strcmp(species, "pokemon") && strcmp(species, "trainers") && strcmp(species, "")) {
@@ -146,6 +144,7 @@ int verify_input(char *region, char *species, char *type) {
     }else if (strcmp(type, "main") && strcmp(type, "one_time") && strcmp(type, "recurring") && strcmp(type, "gym_leaders") && strcmp(type, "")) {
         return 1;
     }
+
     return 0;
 }
 
@@ -203,13 +202,12 @@ char* get_filters_files(char* type, int argc, char **argv) {
      * La funcion devuelve el argumento correspondiente al tipo de argumento seleccionado
      * En caso de que no se encuentre un valor en el argumento, se devuelve NULL
      */
-
     int i = 1;
 
     while (i < argc) {
         if (!strcmp(type, argv[i])) {
             if (i == argc - 1) {
-                return NULL; /* caso en donde el flag se encuentra al final */
+                return "none"; /* caso en donde el flag se encuentra al final */
             } else {
                 return argv[i + 1];
             }
@@ -234,7 +232,7 @@ int get_filters_output(char* type, int argc, char **argv) {
      * 0 en caso de no encontrarlo.
      */
 
-    int i = 0;
+    int i = 1;
 
     while (i < argc) {
         if (!strcmp(type, argv[i])) {
@@ -250,13 +248,13 @@ void print_paths(int l, int sz, char* d_name, int size) {
     if (l) {
         printf("%s", d_name);
         if (sz) {
-            printf(": %d kB", size);
+            printf(": %d bytes", size);
         }
         printf("\n");
     }
 
     if (!l && sz) {
-        printf("- %d kB\n", size);
+        printf("- %d kbytes\n", size);
     }
 }
 
